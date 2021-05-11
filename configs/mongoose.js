@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 
 mongoose
   .connect(
-    'mongodb+srv://Thornnk:database@cluster0.tpwjp.mongodb.net/applant',
+    `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.tpwjp.mongodb.net/${process.env.DB_NAME}`,
     {
       useNewUrlParser: true,
       useUnifiedTopology: true,
