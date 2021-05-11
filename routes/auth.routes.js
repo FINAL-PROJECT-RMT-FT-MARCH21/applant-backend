@@ -12,7 +12,7 @@ router.post('/signup', (req, res, next) => {
   if (username === '' || password === '') {
     res.send({ message: "Username and password can't be empty" })
     return
-  } else if (password.length < 6) {
+  } else if (password.length < 3) {
     res.send({ message: 'The password must be at least 6 digits long' })
     return
   }
