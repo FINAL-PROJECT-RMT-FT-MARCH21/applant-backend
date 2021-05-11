@@ -4,13 +4,30 @@ const Schema = mongoose.Schema
 
 const userSchema = new Schema(
   {
-    username: {type: String, required: true, createIndexes: true, createIndexes: true},
-    password: {type: String, required: true},
-    sports: [{type: Schema.Types.ObjectId, ref:'Pokemon'}]
-  
-}, { versionKey: false})
+    username: {
+      type: String,
+      required: true,
+      createIndexes: true,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+    admin: { type: Boolean },
+    favoritePlants: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Plant',
+      },
+    ],
+    posts: { type: [String] },
+    rating: { type: Number },
+  },
+  {
+    versionKey: false,
+  }
+)
 
-
-const User = mongoose.model('User', userSchema) 
+const User = mongoose.model('User', userSchema)
 
 module.exports = User
