@@ -1,5 +1,4 @@
 require('dotenv').config()
-
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const express = require('express')
@@ -10,22 +9,16 @@ const chalk = require('chalk')
 const flash = require('connect-flash')
 const cors = require('cors')
 const LocalStrategy = require('passport-local').Strategy
-
 const User = require('./models/User.model')
-
 // ---------- Mongoose ---------- //
 require('./configs/mongoose')
-
 // ---------- Express ---------- //
 const app = express()
-
 // ---------- Middleware setup ---------- //
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(cookieParser())
-
 // -------- CORS --------
-
 app.use(
   cors({
     methods: ['GET', 'POST'],
@@ -33,7 +26,6 @@ app.use(
     origin: ['http://localhost:3000'],
   })
 )
-
 // -------- PASSPORT --------
 app.use(
   session({
@@ -42,11 +34,9 @@ app.use(
     saveUninitialized: true,
   })
 )
-
 passport.serializeUser((user, callback) => {
   callback(null, user._id)
 })
-
 passport.deserializeUser((id, callback) => {
   User.findById(id)
     .then((result) => {
@@ -56,9 +46,7 @@ passport.deserializeUser((id, callback) => {
       callback(err)
     })
 })
-
 app.use(flash())
-
 passport.use(
   new LocalStrategy(
     {
@@ -87,15 +75,12 @@ passport.use(
     }
   )
 )
-
 app.use(passport.initialize())
 app.use(passport.session())
-
 // ---------- ROUTES ---------- //
 app.use('/', require('./routes/index.routes'))
 app.use('/', require('./routes/auth.routes'))
 app.use('/', require('./routes/profile.routes'))
-
 // ---------- LISTENER ---------- //
 app.listen(process.env.PORT || 5000, () => {
   console.log(chalk.green.inverse('Port activated'))
