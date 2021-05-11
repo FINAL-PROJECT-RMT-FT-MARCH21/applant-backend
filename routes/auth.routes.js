@@ -5,6 +5,20 @@ const bcrypt = require('bcrypt')
 const passport = require('passport')
 
 const User = require('../models/User.model')
+const { red } = require('chalk')
+
+const Plant = require('../models/Plant.model')
+
+router.get('/all-plants', (req, res)=>{
+  Plant.find()
+  .then((result) => {
+    res.send(result)
+    console.log(result)
+  })
+  .catch((err) => {
+    console.log(err)
+  })
+})
 
 // ---------- Sign up ---------- //
 router.post('/signup', (req, res, next) => {
