@@ -70,6 +70,7 @@ router.post('/login', (req, res) => {
         res.send({ message: 'Something went bad with req.login', err })
       } else {
         User.findById(user._id)
+          .populate('favoritePlants')
           .then((result) => {
             res.send({ message: 'Log in succesful', result })
           })

@@ -6,6 +6,7 @@ mongoose
     {
       useNewUrlParser: true,
       useUnifiedTopology: true,
+      useFindAndModify: false,
     }
   )
   .then((x) => {
@@ -14,4 +15,3 @@ mongoose
   .catch((err) => {
     console.error('Error connecting to mongo', err)
   })
-
