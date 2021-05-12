@@ -7,9 +7,6 @@ router.get('/profile', (req, res, next) => {
   res.send('profile send from backend!')
 })
 
-router.get('/loggedin', (req, res, next) => {
-  res.send(req.user)
-})
 
 router.post('/add-plant', (req, res) => {
   const { plantId, user } = req.body

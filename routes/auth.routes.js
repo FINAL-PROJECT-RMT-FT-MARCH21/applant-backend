@@ -72,6 +72,7 @@ router.post('/login', (req, res) => {
         User.findById(user._id)
           .populate('favoritePlants')
           .then((result) => {
+            /* console.log(req.user) */
             res.send({ message: 'Log in succesful', result })
           })
           .catch(() => {
@@ -81,6 +82,13 @@ router.post('/login', (req, res) => {
     })
   })(req, res)
 })
+
+router.get('/loggedin', (req, res, next) => {
+  console.log(req.user)
+  res.send(req.user)
+})
+
+
 
 // ------ Logout ----------- //
 router.get('/logout', (req, res) => {
