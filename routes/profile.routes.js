@@ -12,17 +12,15 @@ router.get('/loggedin', (req, res, next) => {
 })
 
 router.post('/add-plant', (req, res) => {
-  const { name } = req.body
-  console.log(req.body.favoritePlants)
-  Plant.findOne({ name })
+  const { plantId, user } = req.body
+  Plant.findById(plantId)
     .then((result) => {
       if (result) {
-        // console.log('RESULT' + result)
-        console.log(req.user)
         if (!req.user.favoritePlants.includes(result._id)) {
           User.findByIdAndUpdate(req.user._id, {
             $push: { favoritePlants: result._id },
-          }).then((result) => {
+          }, {new: true})
+          .then((result) => {
             res.send({
               message: `${result.commonName} added successfully`,
               result,
