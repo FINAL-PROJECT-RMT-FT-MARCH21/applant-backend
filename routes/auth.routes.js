@@ -9,15 +9,14 @@ const { red } = require('chalk')
 
 const Plant = require('../models/Plant.model')
 
-router.get('/all-plants', (req, res)=>{
+router.get('/all-plants', (req, res) => {
   Plant.find()
-  .then((result) => {
-    res.send(result)
-    console.log(result)
-  })
-  .catch((err) => {
-    console.log(err)
-  })
+    .then((result) => {
+      res.send(result)
+    })
+    .catch((err) => {
+      console.log(err)
+    })
 })
 
 // ---------- Sign up ---------- //
