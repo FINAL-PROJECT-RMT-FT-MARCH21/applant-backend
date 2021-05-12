@@ -16,9 +16,9 @@ router.post('/add-plant', (req, res) => {
   Plant.findOne({ name })
     .then((result) => {
       if (result) {
-        if (!req.user.plants.includes(result._id)) {
+        if (!req.user.favoritePlants.includes(result._id)) {
           User.findByIdAndUpdate(req.user._id, {
-            $push: { plants: result._id },
+            $push: { favoritePlants: result._id },
           }).then((result) => {
             res.send({
               message: `${result.commonName} added successfully`,
@@ -31,7 +31,7 @@ router.post('/add-plant', (req, res) => {
       } else {
         Plant.create(req.body).then((result) => {
           User.findByIdAndUpdate(req.user._id, {
-            $push: { plants: result._id },
+            $push: { favoritePlants: result._id },
           }).then((result) => {
             res.send({
               message: `${result.commonName} created and added successfully`,

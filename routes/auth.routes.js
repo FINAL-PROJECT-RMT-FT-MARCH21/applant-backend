@@ -81,4 +81,10 @@ router.post('/login', (req, res) => {
   })(req, res)
 })
 
+// ------ Logout ----------- //
+router.get('/logout', (req, res) => {
+  req.logout()
+  res.send({ message: 'Session closed succesfully!' })
+})
+
 module.exports = router
