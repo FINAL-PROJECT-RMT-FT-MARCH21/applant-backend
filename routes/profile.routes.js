@@ -3,6 +3,8 @@ const router = express.Router()
 
 const User = require('../models/User.model')
 const Plant = require('../models/Plant.model')
+
+
 router.get('/profile', (req, res, next) => {
   res.send('profile send from backend!')
 })
@@ -11,15 +13,16 @@ router.get('/profile', (req, res, next) => {
 router.post('/add-plant', (req, res) => {
   const { plantId, user } = req.body
   Plant.findById(plantId)
-    .then((result) => {
-      if (result) {
-        if (!req.user.favoritePlants.includes(result._id)) {
+    .then((plant) => {
+      if (plant) {
+        if (!req.user.favoritePlants.includes(plant._id)) {
           User.findByIdAndUpdate(req.user._id, {
-            $push: { favoritePlants: result._id },
+            $push: { favoritePlants: plant._id },
           }, {new: true})
+          .populate('favoritePlants')
           .then((result) => {
             res.send({
-              message: `${result.commonName} added successfully`,
+              message: `${plant.commonName} added successfully`,
               result,
             })
           })
@@ -27,10 +30,13 @@ router.post('/add-plant', (req, res) => {
           res.send({ message: 'This plant has been already added' })
         }
       } else {
-        Plant.create(req.body).then((result) => {
+        Plant.create(req.body)
+        .then((result) => {
           User.findByIdAndUpdate(req.user._id, {
             $push: { favoritePlants: result._id },
-          }).then((result) => {
+          })
+          .populate('favoritePlants')
+          .then((result) => {
             res.send({
               message: `${result.commonName} created and added successfully`,
               result,

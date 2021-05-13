@@ -1,5 +1,6 @@
 const express = require('express')
 const router = express.Router()
+const chalk = require('chalk')
 
 const bcrypt = require('bcrypt')
 const passport = require('passport')
@@ -49,14 +50,18 @@ router.post('/signup', (req, res, next) => {
 // ---------- Log in ---------- //
 router.post('/login', (req, res) => {
   passport.authenticate('local', (err, user, failureDetails) => {
+    //console.log(chalk.red.inverse('====>'+ user.username))
     if (err) {
       console.log(err)
-      res.send({ message: 'Something went bad with Passport Authentication' })
+      res.send({ message: 'Something went bad with Passport Authentication'})
       return
     }
-
+    // if(user.username === ' ' || user.password === ' '){
+    //   res.send({message: 'Missing credentials', failureDetails})
+    //   return
+    // }
     if (!user) {
-      res.send({ message: 'This user does not exist', failureDetails })
+      res.send({ message: 'Incorrect username or password', failureDetails })
       return
     }
 
@@ -72,8 +77,7 @@ router.post('/login', (req, res) => {
         User.findById(user._id)
           .populate('favoritePlants')
           .then((result) => {
-            /* console.log(req.user) */
-            res.send({ message: 'Log in succesful', result })
+            res.send({ message: 'Log in successfully', result })
           })
           .catch(() => {
             res.send({ message: 'Error finding the user' })
@@ -83,17 +87,28 @@ router.post('/login', (req, res) => {
   })(req, res)
 })
 
-router.get('/loggedin', (req, res, next) => {
-  console.log(req.user)
-  res.send(req.user)
+router.get('/loggedin', (req, res) => {
+  console.log('logged in!')
+  if (req.user) {
+    User.findById(req.user._id)
+    .populate('favoritePlants')
+    .then((user) => {
+      console.log('user correct: ', user)
+      res.send({message: 'User sent', user})
+    })
+    .catch((err) => {
+      res.send({message: 'Error sending user'})
+    })
+  } else {
+    console.log('Error sending user (else)')
+    res.send(req.user)
+  }
 })
-
-
 
 // ------ Logout ----------- //
 router.get('/logout', (req, res) => {
   req.logout()
-  res.send({ message: 'Session closed succesfully!' })
+  res.send({ message: 'Session closed successfully!' })
 })
 
 module.exports = router

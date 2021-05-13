@@ -61,7 +61,7 @@ passport.use(
     },
     (req, username, password, next) => {
       User.findOne({ username })
-        .then((user) => {
+      .then((user) => {
           if (!user) {
             return next(null, false, {
               message: `Incorrect username or password`,

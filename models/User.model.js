@@ -13,7 +13,7 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
-    admin: { type: Boolean },
+    admin: { type: Boolean, default: false},
     favoritePlants: [
       {
         type: Schema.Types.ObjectId,

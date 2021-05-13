@@ -36,6 +36,7 @@ const plantSchema = new Schema(
     exposure: {
       type: [String],
     },
+    price: {type:Number,}
   },
   {
     versionKey: false,
