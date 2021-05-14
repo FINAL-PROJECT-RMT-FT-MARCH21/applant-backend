@@ -17,11 +17,7 @@ router.get('/all-plants', (req, res)=>{
  router.post('/delete-plant/:_id', (req, res) => {
   User.findByIdAndUpdate(req.user._id, {$pull: {favoritePlants: req.params._id}})
   .then((result)=>{
-    Plant.findByIdAndDelete(req.params._id)
-    .then((result) => {
-      console.log(result)
       res.send(result)
-    })
   })
   .catch((error)=>{
     res.send(error)

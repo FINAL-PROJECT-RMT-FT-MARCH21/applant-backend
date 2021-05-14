@@ -1,8 +1,9 @@
 const mongoose = require('mongoose')
 
 const Schema = mongoose.Schema
+const Plant = mongoose.model('Plant', plantSchema)
 
-const plantSchema = new Schema(
+const postSchema = new Schema(
   {
     title: {
       type: String,
@@ -21,6 +22,5 @@ const plantSchema = new Schema(
   }
 )
 
-const Plant = mongoose.model('Plant', plantSchema)
 
-module.exports = Plant
+module.exports = Post

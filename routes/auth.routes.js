@@ -10,7 +10,7 @@ const { red } = require('chalk')
 
 const Plant = require('../models/Plant.model')
 
-router.get('/all-plants', (req, res) => {
+/* router.get('/all-plants', (req, res) => {
   Plant.find()
     .then((result) => {
       res.send(result)
@@ -18,7 +18,7 @@ router.get('/all-plants', (req, res) => {
     .catch((err) => {
       console.log(err)
     })
-})
+}) */
 
 // ---------- Sign up ---------- //
 router.post('/signup', (req, res, next) => {
@@ -50,7 +50,6 @@ router.post('/signup', (req, res, next) => {
 // ---------- Log in ---------- //
 router.post('/login', (req, res) => {
   passport.authenticate('local', (err, user, failureDetails) => {
-    //console.log(chalk.red.inverse('====>'+ user.username))
     if (err) {
       console.log(err)
       res.send({ message: 'Something went bad with Passport Authentication'})
@@ -87,13 +86,13 @@ router.post('/login', (req, res) => {
   })(req, res)
 })
 
+//------------ Check if there's user logged ----------- //
 router.get('/loggedin', (req, res) => {
   console.log('logged in!')
   if (req.user) {
     User.findById(req.user._id)
     .populate('favoritePlants')
     .then((user) => {
-      console.log('user correct: ', user)
       res.send({message: 'User sent', user})
     })
     .catch((err) => {

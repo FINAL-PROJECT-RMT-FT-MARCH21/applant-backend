@@ -20,7 +20,22 @@ const userSchema = new Schema(
         ref: 'Plant',
       },
     ],
-    posts: { type: [String] },
+    cart:[ {
+      plant: {
+        type: Schema.Types.ObjectId,
+        ref: 'Plant',
+      },
+      quantity: {
+        type:Number
+      }
+    }
+    ],
+    posts: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Posts',
+      },
+    ],
     rating: { type: Number },
   },
   {
