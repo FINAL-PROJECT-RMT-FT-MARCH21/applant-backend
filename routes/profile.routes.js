@@ -5,6 +5,10 @@ const User = require('../models/User.model')
 const Plant = require('../models/Plant.model')
 
 
+const toUpper = (word) => {
+  if (word) return word[0].toUpperCase() + word.slice(1)
+}
+
 // ------------ Append plant to favorites --------------- //
 router.post('/add-to-favorites/:_id', (req, res) => {
   Plant.findById(req.params._id)
@@ -62,54 +66,41 @@ router.post('/remove-from-favorites/:_id', (req, res) => {
 
 // -------------- Put item into cart ------------------ //
 router.post('/add-to-cart', (req, res) => {
-  const { plantId, quantity, user } = req.body
+  const { plantId, quantity } = req.body
   Plant.findById(plantId)
     .then((plant) => {
-      if (plant) {
-        if (!req.user.cart.includes(plant._id)) {
-          User.findByIdAndUpdate(
-            req.user._id,
-            {
-              $push: { cart: { plant: plant._id, quantity: quantity } },
-            },
-            { new: true }
-          )
-          User.populate('cart.plant').then((result) => {
-            res.send({
-              message: `${plant.commonName} added to your cart`,
-              result,
-            })
-          })
-        } else {
-          res.send({
-            message: 'This plant has been already added to your cart',
-          })
-        }
-      } else {
-        Plant.create(req.body).then((result) => {
-          User.findByIdAndUpdate(req.user._id, {
+      if (!req.user.cart.includes(plant._id)) {
+        User.findByIdAndUpdate(
+          req.user._id,
+          {
             $push: { cart: { plant: plant._id, quantity: quantity } },
+          },
+          { new: true }
+        )
+        .populate('cart').populate('cart.plant').then((result) => {
+          res.send({
+            message: `${toUpper(plant.commonName)} plant added to your cart`,
+            data: result,
           })
-          User.populate('cart.plant').then((result) => {
-            res.send({
-              message: `${result.commonName} created and added successfully`,
-              result,
-            })
-          })
+        })
+      } else {
+        // TODO +1 to quantity en vez de send
+        res.send({
+          message: 'This plant has been already added to your cart',
         })
       }
     })
     .catch((error) => {
       console.log(error)
-      res.send({ message: 'Error adding plant' })
+      res.send({ message: 'Error adding to cart' })
     })
 })
 
 // -------------- Remove store item from favorites ------------------ //
-router.post('/remove-from-cart/:_id', (req, res) => {
-  User.findByIdAndUpdate(req.user._id, {$pull: {favoritePlants: req.params._id}})
+router.get('/remove-from-cart/:_id', (req, res) => {
+  User.findByIdAndDelete(req.user._id)
   .then((result)=>{
-      res.send(result)
+      res.send({message: `${toUpper(result.commonName)} removed from cart`, data: result})
   })
   .catch((error)=>{
     res.send(error)

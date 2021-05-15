@@ -21,7 +21,7 @@ router.get('/all-users', (req, res, next) => {
 router.post('/edit-user/:_id', (req, res, next) => {
   User.findByIdAndUpdate(req.params._id, req.body)
   .then((result) => {
-    send({message: `${result.username} edited`, data: result})
+    res.send({message: `User ${result.username} edited`, data: result})
   })
   .catch((err) => {
     console.log(err)
@@ -31,7 +31,7 @@ router.post('/edit-user/:_id', (req, res, next) => {
 router.post('/delete-user/:_id', (req, res, next) => {
   User.findByIdAndDelete(req.params._id)
   .then((result) => {
-    send({message: `${result.username} deleted`, data: result})
+    res.send({message: `User ${result.username} deleted`, data: result})
   })
   .catch((err) => {
     console.log(err)

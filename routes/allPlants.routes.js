@@ -2,7 +2,6 @@ const express = require('express')
 const router = express.Router()
 
 const Plant = require('../models/Plant.model')
-const User = require('../models/User.model')
 
 const toUpper = (word) => {
   if (word) return word[0].toUpperCase() + word.slice(1)
