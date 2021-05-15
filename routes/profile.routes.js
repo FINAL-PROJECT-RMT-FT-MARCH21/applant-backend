@@ -4,7 +4,6 @@ const router = express.Router()
 const User = require('../models/User.model')
 const Plant = require('../models/Plant.model')
 
-
 router.get('/profile', (req, res, next) => {
   res.send('profile send from backend!')
 })
@@ -16,32 +15,35 @@ router.post('/add-plant', (req, res) => {
     .then((plant) => {
       if (plant) {
         if (!req.user.favoritePlants.includes(plant._id)) {
-          User.findByIdAndUpdate(req.user._id, {
-            $push: { favoritePlants: plant._id },
-          }, {new: true})
-          .populate('favoritePlants')
-          .then((result) => {
-            res.send({
-              message: `${plant.commonName} added successfully`,
-              result,
+          User.findByIdAndUpdate(
+            req.user._id,
+            {
+              $push: { favoritePlants: plant._id },
+            },
+            { new: true }
+          )
+            .populate('favoritePlants')
+            .then((result) => {
+              res.send({
+                message: `${plant.commonName} added successfully`,
+                result,
+              })
             })
-          })
         } else {
           res.send({ message: 'This plant has been already added' })
         }
       } else {
-        Plant.create(req.body)
-        .then((result) => {
+        Plant.create(req.body).then((result) => {
           User.findByIdAndUpdate(req.user._id, {
             $push: { favoritePlants: result._id },
           })
-          .populate('favoritePlants')
-          .then((result) => {
-            res.send({
-              message: `${result.commonName} created and added successfully`,
-              result,
+            .populate('favoritePlants')
+            .then((result) => {
+              res.send({
+                message: `${result.commonName} created and added successfully`,
+                result,
+              })
             })
-          })
         })
       }
     })
@@ -51,8 +53,6 @@ router.post('/add-plant', (req, res) => {
     })
 })
 
-
-
 // -------------- Add item to cart ------------------ //
 
 router.post('/add-to-cart', (req, res) => {
@@ -61,27 +61,30 @@ router.post('/add-to-cart', (req, res) => {
     .then((plant) => {
       if (plant) {
         if (!req.user.cart.includes(plant._id)) {
-          User.findByIdAndUpdate(req.user._id, {
-            $push: { cart:{plant: plant._id, quantity: quantity}},
-          }, {new: true})
-          .populate('cart')
-          .then((result) => {
+          User.findByIdAndUpdate(
+            req.user._id,
+            {
+              $push: { cart: { plant: plant._id, quantity: quantity } },
+            },
+            { new: true }
+          )
+          User.populate('cart.plant').then((result) => {
             res.send({
               message: `${plant.commonName} added to your cart`,
               result,
             })
           })
         } else {
-          res.send({ message: 'This plant has been already added to your cart' })
+          res.send({
+            message: 'This plant has been already added to your cart',
+          })
         }
       } else {
-        Plant.create(req.body)
-        .then((result) => {
+        Plant.create(req.body).then((result) => {
           User.findByIdAndUpdate(req.user._id, {
-            $push: { cart:{plant: plant._id, quantity: quantity}},
+            $push: { cart: { plant: plant._id, quantity: quantity } },
           })
-          .populate('cart')
-          .then((result) => {
+          User.populate('cart.plant').then((result) => {
             res.send({
               message: `${result.commonName} created and added successfully`,
               result,
