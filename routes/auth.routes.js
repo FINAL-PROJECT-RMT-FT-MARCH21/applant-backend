@@ -10,16 +10,6 @@ const { red } = require('chalk')
 
 const Plant = require('../models/Plant.model')
 
-/* router.get('/all-plants', (req, res) => {
-  Plant.find()
-    .then((result) => {
-      res.send(result)
-    })
-    .catch((err) => {
-      console.log(err)
-    })
-}) */
-
 // ---------- Sign up ---------- //
 router.post('/signup', (req, res, next) => {
   const { username, password } = req.body
@@ -55,10 +45,6 @@ router.post('/login', (req, res) => {
       res.send({ message: 'Something went bad with Passport Authentication'})
       return
     }
-    // if(user.username === ' ' || user.password === ' '){
-    //   res.send({message: 'Missing credentials', failureDetails})
-    //   return
-    // }
     if (!user) {
       res.send({ message: 'Incorrect username or password', failureDetails })
       return
@@ -86,7 +72,7 @@ router.post('/login', (req, res) => {
   })(req, res)
 })
 
-//------------ Check if there's user logged ----------- //
+//------------ Check if the user is logged ----------- //
 router.get('/loggedin', (req, res) => {
   console.log('logged in!')
   if (req.user) {

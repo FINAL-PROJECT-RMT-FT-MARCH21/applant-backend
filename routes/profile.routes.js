@@ -4,14 +4,10 @@ const router = express.Router()
 const User = require('../models/User.model')
 const Plant = require('../models/Plant.model')
 
-router.get('/profile', (req, res, next) => {
-  res.send('profile send from backend!')
-})
 
-// ------------ Add plant to favorites --------------- //
-router.post('/add-plant', (req, res) => {
-  const { plantId, user } = req.body
-  Plant.findById(plantId)
+// ------------ Append plant to favorites --------------- //
+router.post('/add-to-favorites/:_id', (req, res) => {
+  Plant.findById(req.params._id)
     .then((plant) => {
       if (plant) {
         if (!req.user.favoritePlants.includes(plant._id)) {
@@ -53,8 +49,18 @@ router.post('/add-plant', (req, res) => {
     })
 })
 
-// -------------- Add item to cart ------------------ //
+// -------------- Remove plant from favorites ------------------ //
+router.post('/remove-from-favorites/:_id', (req, res) => {
+  User.findByIdAndUpdate(req.user._id, {$pull: {favoritePlants: req.params._id}})
+  .then((result)=>{
+      res.send(result)
+  })
+  .catch((error)=>{
+    res.send(error)
+  })
+})
 
+// -------------- Put item into cart ------------------ //
 router.post('/add-to-cart', (req, res) => {
   const { plantId, quantity, user } = req.body
   Plant.findById(plantId)
@@ -97,6 +103,17 @@ router.post('/add-to-cart', (req, res) => {
       console.log(error)
       res.send({ message: 'Error adding plant' })
     })
+})
+
+// -------------- Remove store item from favorites ------------------ //
+router.post('/remove-from-cart/:_id', (req, res) => {
+  User.findByIdAndUpdate(req.user._id, {$pull: {favoritePlants: req.params._id}})
+  .then((result)=>{
+      res.send(result)
+  })
+  .catch((error)=>{
+    res.send(error)
+  })
 })
 
 module.exports = router
