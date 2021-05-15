@@ -28,7 +28,10 @@ router.post('/signup', (req, res, next) => {
         } else {
           const hashedPassword = bcrypt.hashSync(password, 10)
           User.create({ username, password: hashedPassword }).then((result) => {
-            res.send({ message: `User ${result.username} created successfully`, data: result })
+            res.send({
+              message: `User ${result.username} created successfully`,
+              data: result,
+              successSignup: true})
           })
         }
       })
