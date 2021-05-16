@@ -14,16 +14,19 @@ const Plant = require('../models/Plant.model')
 router.post('/signup', (req, res, next) => {
   const { username, password } = req.body
   if (username === '' || password === '') {
-    res.send({ message: "You must fill all the fields" })
+    res.send({ message: 'You must fill all the fields' })
     return
   } else if (password.length < 3) {
-    res.send({ message: 'The password must be at least 6 digits long'})
+    res.send({ message: 'The password must be at least 6 digits long' })
     return
   } else {
     User.findOne({ username })
       .then((user) => {
         if (user) {
-          res.send({ message: `User ${user.username} already exists`, alreadyExists: true})
+          res.send({
+            message: `User ${user.username} already exists`,
+            alreadyExists: true,
+          })
           return
         } else {
           const hashedPassword = bcrypt.hashSync(password, 10)
@@ -31,7 +34,8 @@ router.post('/signup', (req, res, next) => {
             res.send({
               message: `User ${result.username} created successfully`,
               data: result,
-              successSignup: true})
+              successSignup: true,
+            })
           })
         }
       })
@@ -46,7 +50,7 @@ router.post('/login', (req, res) => {
   passport.authenticate('local', (err, user, failureDetails) => {
     if (err) {
       console.log(err)
-      res.send({ message: 'Something went bad with Passport Authentication'})
+      res.send({ message: 'Something went bad with Passport Authentication' })
       return
     }
     if (!user) {
@@ -79,13 +83,14 @@ router.post('/login', (req, res) => {
 router.get('/loggedin', (req, res) => {
   if (req.user) {
     User.findById(req.user._id)
-    .populate('favoritePlants')
-    .then((user) => {
-      res.send({message: 'User sent', data: user})
-    })
-    .catch((err) => {
-      res.send({message: 'Error sending user'})
-    })
+      .populate('favoritePlants')
+      .populate('cart.plant')
+      .then((user) => {
+        res.send({ message: 'User sent', data: user })
+      })
+      .catch((err) => {
+        res.send({ message: 'Error sending user' })
+      })
   }
 })
 

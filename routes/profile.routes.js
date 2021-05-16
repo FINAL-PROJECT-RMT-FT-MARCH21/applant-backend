@@ -4,7 +4,6 @@ const router = express.Router()
 const User = require('../models/User.model')
 const Plant = require('../models/Plant.model')
 
-
 const toUpper = (word) => {
   if (word) return word[0].toUpperCase() + word.slice(1)
 }
@@ -55,13 +54,15 @@ router.post('/add-to-favorites/:_id', (req, res) => {
 
 // -------------- Remove plant from favorites ------------------ //
 router.post('/remove-from-favorites/:_id', (req, res) => {
-  User.findByIdAndUpdate(req.user._id, {$pull: {favoritePlants: req.params._id}})
-  .then((result)=>{
+  User.findByIdAndUpdate(req.user._id, {
+    $pull: { favoritePlants: req.params._id },
+  })
+    .then((result) => {
       res.send(result)
-  })
-  .catch((error)=>{
-    res.send(error)
-  })
+    })
+    .catch((error) => {
+      res.send(error)
+    })
 })
 
 // -------------- Put item into cart ------------------ //
@@ -77,12 +78,14 @@ router.post('/add-to-cart', (req, res) => {
           },
           { new: true }
         )
-        .populate('cart').populate('cart.plant').then((result) => {
-          res.send({
-            message: `${toUpper(plant.commonName)} plant added to your cart`,
-            data: result,
+          .populate('cart')
+          .populate('cart.plant')
+          .then((result) => {
+            res.send({
+              message: `${toUpper(plant.commonName)} plant added to your cart`,
+              data: result,
+            })
           })
-        })
       } else {
         // TODO +1 to quantity en vez de send
         res.send({
@@ -99,12 +102,15 @@ router.post('/add-to-cart', (req, res) => {
 // -------------- Remove store item from favorites ------------------ //
 router.get('/remove-from-cart/:_id', (req, res) => {
   User.findByIdAndDelete(req.user._id)
-  .then((result)=>{
-      res.send({message: `${toUpper(result.commonName)} removed from cart`, data: result})
-  })
-  .catch((error)=>{
-    res.send(error)
-  })
+    .then((result) => {
+      res.send({
+        message: `${toUpper(result.commonName)} removed from cart`,
+        data: result,
+      })
+    })
+    .catch((error) => {
+      res.send(error)
+    })
 })
 
 module.exports = router
