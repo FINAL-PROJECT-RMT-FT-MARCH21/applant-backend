@@ -99,14 +99,14 @@ router.post('/add-to-cart', (req, res) => {
     })
 })
 
-// -------------- Remove store item from favorites ------------------ //
-router.get('/remove-from-cart/:_id', (req, res) => {
-  User.findByIdAndDelete(req.user._id)
+// -------------- Remove store item from cart ------------------ //
+router.post('/remove-from-cart/:_id', (req, res) => {
+  User.findByIdAndUpdate(req.user._id, {
+    $pull: {cart: {plant: req.params._id}},
+  })
+    .populate('cart.plant')
     .then((result) => {
-      res.send({
-        message: `${toUpper(result.commonName)} removed from cart`,
-        data: result,
-      })
+      res.send(result)
     })
     .catch((error) => {
       res.send(error)
