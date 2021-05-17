@@ -67,37 +67,53 @@ router.post('/remove-from-favorites/:_id', (req, res) => {
 
 // -------------- Put item into cart ------------------ //
 router.post('/add-to-cart', (req, res) => {
-  const { plantId, quantity } = req.body
+  const { plantId } = req.body
+  const newQuantity = req.body.quantity
+  
   Plant.findById(plantId)
-    .then((plant) => {
-      if (!req.user.cart.includes(plant._id)) {
-        User.findByIdAndUpdate(
-          req.user._id,
-          {
-            $push: { cart: { plant: plant._id, quantity: quantity } },
-          },
-          { new: true }
-        )
+  .then((plant) => {
+      if (req.user){
+        const cartPlants = req.user.cart.map((item)=>{
+          return item.plant
+        })
+        if (!cartPlants.includes(plantId)) {
+          User.findByIdAndUpdate(req.user._id, {$push: { cart: { plant: plantId, quantity: newQuantity } }},{ new: true }) 
+          .populate('cart')
+          .populate('cart.plant')
+            .then((result) => {
+              res.send({
+                message: `${toUpper(plant.commonName)} plant added to your cart`,
+                data: result,
+              })
+              })
+        } else {
+          User.findById(req.user._id)
           .populate('cart')
           .populate('cart.plant')
           .then((result) => {
+            const repeatedItem = result.cart.filter((item)=>{
+              return item.plant._id == plantId
+            })[0]
+            console.log('repeatedItem:', repeatedItem)
+            const updatedItem = {
+              plant: repeatedItem.plant,
+              quantity: Number(repeatedItem.quantity) + Number(newQuantity)
+            }
+            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>', updatedItem)
             res.send({
               message: `${toUpper(plant.commonName)} plant added to your cart`,
-              data: result,
+              data: updatedItem
             })
-          })
-      } else {
-        // TODO +1 to quantity en vez de send
-        res.send({
-          message: 'This plant has been already added to your cart',
-        })
+          }) 
+        }
       }
-    })
+    }
+    )
     .catch((error) => {
       console.log(error)
       res.send({ message: 'Error adding to cart' })
     })
-})
+  })
 
 // -------------- Remove store item from cart ------------------ //
 router.post('/remove-from-cart/:_id', (req, res) => {

@@ -88,7 +88,7 @@ app.use('/', require('./routes/index.routes'))
 app.use('/', require('./routes/auth.routes'))
 app.use('/', require('./routes/allPlants.routes'))
 app.use('/', require('./routes/profile.routes'))
-
+app.use('/', require('./routes/stripe.routes'))
 // ---------- LISTENER ---------- //
 app.listen(process.env.PORT || 5000, () => {
   console.log(chalk.green.inverse('Port activated'))

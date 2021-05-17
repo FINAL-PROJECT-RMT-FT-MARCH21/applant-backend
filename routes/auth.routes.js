@@ -67,7 +67,6 @@ router.post('/login', (req, res) => {
         res.send({ message: 'Something went bad logging in' })
       } else {
         User.findById(user._id)
-          .populate('cart.plant')
           .populate('favoritePlants')
           .populate('cart.plant')
           .then((result) => {
