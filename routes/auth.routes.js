@@ -69,6 +69,7 @@ router.post('/login', (req, res) => {
         User.findById(user._id)
           .populate('cart.plant')
           .populate('favoritePlants')
+          .populate('cart.plant')
           .then((result) => {
             res.send({ message: 'Log in successfully', data: result })
           })
