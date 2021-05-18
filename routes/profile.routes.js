@@ -107,7 +107,7 @@ router.post('/add-to-cart', (req, res) => {
 
             cartWithoutUpdatingPlant.push(updatedItem)
             
-            User.findByIdAndUpdate(req.user._id, {cart: cartWithoutUpdatingPlant})
+            User.findByIdAndUpdate(req.user._id, {cart: cartWithoutUpdatingPlant},{new: true})
             .then(()=>{
               res.send({
                 message: `${toUpper(plant.commonName)} plant added to your cart`,
