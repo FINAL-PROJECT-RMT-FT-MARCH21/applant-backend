@@ -58,7 +58,7 @@ router.post('/remove-from-favorites/:_id', (req, res) => {
     $pull: { favoritePlants: req.params._id },
   })
     .then((result) => {
-      res.send(result)
+      res.send({message: `${toUpper(result)} removed from favorites`, data: result})
     })
     .catch((error) => {
       res.send(error)
@@ -95,11 +95,19 @@ router.post('/add-to-cart', (req, res) => {
             const repeatedItem = result.cart.filter((item)=>{
               return item.plant._id == plantId
             })[0]
+<<<<<<< HEAD
+=======
             //console.log('repeatedItem:', repeatedItem)
+>>>>>>> 0fc59d8819e755c6fdc0a8f0a68d95a52304ee6b
             const updatedItem = {
               plant: repeatedItem.plant,
               quantity: Number(repeatedItem.quantity) + Number(newQuantity)
             }
+<<<<<<< HEAD
+            res.send({
+              message: `${toUpper(plant.commonName)} plant added to your cart`,
+              data: updatedItem
+=======
             const cartWithoutUpdatingPlant = result.cart.filter((item)=>{
               console.log(plantId.toString() != item.plant._id)
               return item.plant._id != plantId.toString()
@@ -114,6 +122,7 @@ router.post('/add-to-cart', (req, res) => {
                 user: '',
                 updatedPlant: updatedItem
               })
+>>>>>>> 0fc59d8819e755c6fdc0a8f0a68d95a52304ee6b
             })
           }) 
         }
