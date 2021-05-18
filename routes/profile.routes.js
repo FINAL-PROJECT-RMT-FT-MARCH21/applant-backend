@@ -58,7 +58,7 @@ router.post('/remove-from-favorites/:_id', (req, res) => {
     $pull: { favoritePlants: req.params._id },
   })
     .then((result) => {
-      res.send(result)
+      res.send({message: `${toUpper(result)} removed from favorites`, data: result})
     })
     .catch((error) => {
       res.send(error)
@@ -94,12 +94,10 @@ router.post('/add-to-cart', (req, res) => {
             const repeatedItem = result.cart.filter((item)=>{
               return item.plant._id == plantId
             })[0]
-            console.log('repeatedItem:', repeatedItem)
             const updatedItem = {
               plant: repeatedItem.plant,
               quantity: Number(repeatedItem.quantity) + Number(newQuantity)
             }
-            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>', updatedItem)
             res.send({
               message: `${toUpper(plant.commonName)} plant added to your cart`,
               data: updatedItem
