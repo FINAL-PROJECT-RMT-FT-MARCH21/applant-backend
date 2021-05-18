@@ -83,7 +83,8 @@ router.post('/add-to-cart', (req, res) => {
             .then((result) => {
               res.send({
                 message: `${toUpper(plant.commonName)} plant added to your cart`,
-                data: result,
+                user: result,
+                updatedPlant: ''
               })
               })
         } else {
@@ -94,15 +95,25 @@ router.post('/add-to-cart', (req, res) => {
             const repeatedItem = result.cart.filter((item)=>{
               return item.plant._id == plantId
             })[0]
-            console.log('repeatedItem:', repeatedItem)
+            //console.log('repeatedItem:', repeatedItem)
             const updatedItem = {
               plant: repeatedItem.plant,
               quantity: Number(repeatedItem.quantity) + Number(newQuantity)
             }
-            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>', updatedItem)
-            res.send({
-              message: `${toUpper(plant.commonName)} plant added to your cart`,
-              data: updatedItem
+            const cartWithoutUpdatingPlant = result.cart.filter((item)=>{
+              console.log(plantId.toString() != item.plant._id)
+              return item.plant._id != plantId.toString()
+            })
+
+            cartWithoutUpdatingPlant.push(updatedItem)
+            
+            User.findByIdAndUpdate(req.user._id, {cart: cartWithoutUpdatingPlant})
+            .then(()=>{
+              res.send({
+                message: `${toUpper(plant.commonName)} plant added to your cart`,
+                user: '',
+                updatedPlant: updatedItem
+              })
             })
           }) 
         }
