@@ -95,7 +95,7 @@ router.post('/add-to-cart', (req, res) => {
             const repeatedItem = result.cart.filter((item)=>{
               return item.plant._id == plantId
             })[0]
-            
+            //console.log('repeatedItem:', repeatedItem)
             const updatedItem = {
               plant: repeatedItem.plant,
               quantity: Number(repeatedItem.quantity) + Number(newQuantity)
