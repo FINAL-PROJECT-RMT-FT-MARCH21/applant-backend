@@ -23,12 +23,12 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(cookieParser())
 app.set('trust proxy', 1)
-app.use(cookieSession({
-  name: 'session',
-  keys: ['key1','key2'],
-  sameSite: 'none',
-  secure: true
-}))
+// app.use(cookieSession({
+//   name: 'session',
+//   keys: ['key1','key2'],
+//   sameSite: 'none',
+//   secure: true
+// }))
 // -------- CORS --------
 app.use(
   cors({
