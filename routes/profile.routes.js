@@ -67,7 +67,7 @@ router.post('/remove-from-favorites/:_id', (req, res) => {
 
 // -------------- Put item into cart ------------------ //
 router.post('/add-to-cart', (req, res) => {
-  const { plantId } = req.body
+  const { plantId, totalPrice } = req.body
   const newQuantity = req.body.quantity
   
   Plant.findById(plantId)
@@ -77,10 +77,11 @@ router.post('/add-to-cart', (req, res) => {
           return item.plant
         })
         if (!cartPlants.includes(plantId)) {
-          User.findByIdAndUpdate(req.user._id, {$push: { cart: { plant: plantId, quantity: newQuantity } }},{ new: true }) 
+          User.findByIdAndUpdate(req.user._id, {$push: { cart: { plant: plantId, quantity: newQuantity, totalPrice: totalPrice } }},{ new: true }) 
           .populate('cart')
           .populate('cart.plant')
             .then((result) => {
+              console.log(result.user)
               res.send({
                 message: `${toUpper(plant.commonName)} plant added to your cart`,
                 user: result,
@@ -101,7 +102,6 @@ router.post('/add-to-cart', (req, res) => {
               quantity: Number(repeatedItem.quantity) + Number(newQuantity)
             }
             const cartWithoutUpdatingPlant = result.cart.filter((item)=>{
-              console.log(plantId.toString() != item.plant._id)
               return item.plant._id != plantId.toString()
             })
 
@@ -120,11 +120,23 @@ router.post('/add-to-cart', (req, res) => {
       }
     }
     )
-    .catch((error) => {
-      console.log(error)
-      res.send({ message: 'Error adding to cart' })
+    User.findById(req.user._id)
+    .populate('cart')
+    .populate('cart.plant')
+    .then((result) => {
+      const totalPrice = req.body.user.cart.reduce((accumulator, element) => {
+          return accumulator + element.plant.price * element.quantity
+        }, 0)
+      User.findByIdAndUpdate(req.user._id, {totalPrice}, {new:true})
+      .then((result)=>{
+        //console.log("=====>", result)
+      })
+      })
+      .catch((error) => {
+        console.log(error)
+        res.send({ message: 'Error adding to cart' })
+      })
     })
-  })
 
 // -------------- Remove store item from cart ------------------ //
 router.post('/remove-from-cart/:_id', (req, res) => {
@@ -134,6 +146,18 @@ router.post('/remove-from-cart/:_id', (req, res) => {
     .populate('cart.plant')
     .then((result) => {
       res.send(result)
+      User.findById(req.user._id)
+    .populate('cart')
+    .populate('cart.plant')
+    .then((result) => {
+      const totalPrice = req.body.user.cart.reduce((accumulator, element) => {
+          return accumulator += element.plant.price * element.quantity
+        }, 1)
+      User.findByIdAndUpdate(req.user._id, {totalPrice}, {new:true})
+      .then((result)=>{
+        console.log("=====>", result)
+      })
+      })
     })
     .catch((error) => {
       res.send(error)

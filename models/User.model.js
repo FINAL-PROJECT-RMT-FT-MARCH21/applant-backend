@@ -30,6 +30,7 @@ const userSchema = new Schema(
       }
     }
     ],
+    totalPrice: {type:Number, default: 0},
     posts: [
       {
         type: Schema.Types.ObjectId,

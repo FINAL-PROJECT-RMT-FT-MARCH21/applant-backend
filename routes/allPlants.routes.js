@@ -7,10 +7,10 @@ const toUpper = (word) => {
   if (word) return word[0].toUpperCase() + word.slice(1)
 }
 
-router.get('/all-plants', (req, res)=>{
+router.get('/plants', (req, res)=>{
   Plant.find()
   .then((result) => {
-    res.send(result)
+    res.send({data: result})
   })
   .catch((err) => {
     console.log(err)

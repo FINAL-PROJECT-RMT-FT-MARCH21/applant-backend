@@ -81,7 +81,7 @@ router.post('/login', (req, res) => {
 })
 
 //------------ Check if the user is logged ----------- //
-router.get('/loggedin', (req, res) => {
+router.get('/user', (req, res) => {
   if (req.user) {
     User.findById(req.user._id)
       .populate('favoritePlants')
@@ -90,15 +90,18 @@ router.get('/loggedin', (req, res) => {
         res.send({ message: 'User sent', data: user })
       })
       .catch((err) => {
+        console.log(err)
         res.send({ message: 'Error sending user' })
       })
+  } else {
+    res.send({message: 'Not authentified'})
   }
 })
 
 // ------ Logout ----------- //
-router.get('/logout', (req, res) => {
+router.post('/logout', (req, res) => {
   req.logout()
-  res.send({ message: 'Session closed successfully!' })
+  res.send({ message: 'Session closed successfully'})
 })
 
 module.exports = router
