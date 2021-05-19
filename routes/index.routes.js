@@ -8,10 +8,10 @@ router.get('/', (req, res, next) => {
   res.send('Backend working :)')
 })
 
-router.get('/all-users', (req, res, next) => {
+router.get('/users', (req, res, next) => {
   User.find()
     .then((result) => {
-      res.send(result)
+      res.send({data: result})
     })
     .catch((error) => {
       console.log(error)
@@ -29,7 +29,6 @@ router.post('/edit-user/:_id', (req, res, next) => {
 })
 
 router.post('/delete-user/:_id', (req, res, next) => {
-  console.log('deleting user', req.params)
   User.findByIdAndDelete(req.params._id)
   .then((result) => {
     res.send({message: `User ${result.username} deleted`, data: result})

@@ -94,6 +94,7 @@ app.use(passport.session())
 app.use('/', require('./routes/index.routes'))
 app.use('/', require('./routes/auth.routes'))
 app.use('/', require('./routes/allPlants.routes'))
+app.use('/', require('./routes/posts.routes'))
 app.use('/', require('./routes/profile.routes'))
 app.use('/', require('./routes/stripe.routes'))
 // ---------- LISTENER ---------- //
