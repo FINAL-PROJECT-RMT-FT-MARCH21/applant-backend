@@ -67,101 +67,108 @@ router.post('/remove-from-favorites/:_id', (req, res) => {
 
 // -------------- Put item into cart ------------------ //
 router.post('/add-to-cart', (req, res) => {
-  const { plantId, totalPrice } = req.body
+  const plantId = req.body.plantId
   const newQuantity = req.body.quantity
   
   Plant.findById(plantId)
   .then((plant) => {
-      if (req.user){
-        const cartPlants = req.user.cart.map((item)=>{
-          return item.plant
-        })
-        if (!cartPlants.includes(plantId)) {
-          User.findByIdAndUpdate(req.user._id, {$push: { cart: { plant: plantId, quantity: newQuantity, totalPrice: totalPrice } }},{ new: true }) 
-          .populate('cart')
-          .populate('cart.plant')
-            .then((result) => {
-              console.log(result.user)
-              res.send({
-                message: `${toUpper(plant.commonName)} plant added to your cart`,
-                user: result,
-                updatedPlant: ''
-              })
-              })
-        } else {
+    if (req.user){
+      const cartPlants = req.user.cart.map((item)=>{
+        return item.plant
+      })
+      if (!cartPlants.includes(plantId)) {  //cuando añado una planta nueva al carrito (una que no tenía antes)
+        User.findByIdAndUpdate(req.user._id, {$push: { cart: { plant: plantId, quantity: newQuantity } }},{ new: true }) 
+        .populate('cart')
+        .populate('cart.plant')
+        .then(() => {
           User.findById(req.user._id)
           .populate('cart')
           .populate('cart.plant')
-          .then((result) => {
-            const repeatedItem = result.cart.filter((item)=>{
-              return item.plant._id == plantId
-            })[0]
-            //console.log('repeatedItem:', repeatedItem)
-            const updatedItem = {
-              plant: repeatedItem.plant,
-              quantity: Number(repeatedItem.quantity) + Number(newQuantity)
-            }
-            const cartWithoutUpdatingPlant = result.cart.filter((item)=>{
-              return item.plant._id != plantId.toString()
-            })
-
-            cartWithoutUpdatingPlant.push(updatedItem)
-            
-            User.findByIdAndUpdate(req.user._id, {cart: cartWithoutUpdatingPlant},{new: true})
-            .then(()=>{
+          .then((updatedUser) => {
+            const totalPrice = updatedUser.cart.reduce((accumulator, element) => {
+              return accumulator + element.plant.price * element.quantity
+            }, 0)
+            User.findByIdAndUpdate(req.user._id, {totalPrice}, {new:true})
+            .then((user)=>{
               res.send({
                 message: `${toUpper(plant.commonName)} plant added to your cart`,
-                user: '',
-                updatedPlant: updatedItem
+                user,
+                updatedPlant: ''
               })
             })
-          }) 
-        }
+          })
+        })
+      } else {  //Cuando modifico la cantidad de plantas (paso de 2 aloe vera a 5, por ejemplo)
+        User.findById(req.user._id)
+        .populate('cart')
+        .populate('cart.plant')
+        .then((userBeforeUpdating) => {
+          const repeatedItem = userBeforeUpdating.cart.filter((item)=>{
+            return item.plant._id == plantId
+          })[0]
+          const updatedItem = {
+            plant: repeatedItem.plant,
+            quantity: Number(repeatedItem.quantity) + Number(newQuantity)
+          }
+          const cartWithoutUpdatingPlant = userBeforeUpdating.cart.filter((item)=>{
+            return item.plant._id != plantId.toString()
+          })
+
+          const updatedCart = [...cartWithoutUpdatingPlant]
+          updatedCart.unshift(updatedItem)
+            
+          User.findByIdAndUpdate(req.user._id, {cart: updatedCart}, {new: true})
+          .then(()=>{
+            User.findById(req.user._id)
+            .populate('cart')
+            .populate('cart.plant')
+            .then((updatedUser) => {
+              const totalPrice = updatedUser.cart.reduce((accumulator, element) => {
+                return accumulator + element.plant.price * element.quantity
+              }, 0)
+              User.findByIdAndUpdate(req.user._id, {totalPrice}, {new:true})
+              .then((user)=>{
+                res.send({
+                  message: `${toUpper(plant.commonName)} plant added to your cart`,
+                  user,
+                  updatedPlant: updatedItem
+                })
+              })
+            })
+          })
+        }) 
       }
-    }
-    )
-    User.findById(req.user._id)
-    .populate('cart')
-    .populate('cart.plant')
-    .then((result) => {
-      const totalPrice = req.body.user.cart.reduce((accumulator, element) => {
-          return accumulator + element.plant.price * element.quantity
-        }, 0)
-      User.findByIdAndUpdate(req.user._id, {totalPrice}, {new:true})
-      .then((result)=>{
-      })
-      })
-      .catch((error) => {
-        console.log(error)
-        res.send({ message: 'Error adding to cart' })
-      })
-    })
+    }  
+  })
+})
 
 // -------------- Remove store item from cart ------------------ //
 router.post('/remove-from-cart/:_id', (req, res) => {
-  User.findByIdAndUpdate(req.user._id, {
-    $pull: {cart: {plant: req.params._id}},
-  },{new:true})
-    // .populate('cart.plant')
-    .then((result) => {
-      res.send({message: 'This plant has been deleted from your cart'})
-
-      /*    User.findById(req.user._id)
+  User.findByIdAndUpdate(req.user._id, { $pull: {cart: {plant: req.params._id}}} , {new:true})
+  .then(() => {
+    User.findById(req.user._id)
     .populate('cart')
     .populate('cart.plant')
-    .then((result) => {
-      const totalPrice = req.body.user.cart.reduce((accumulator, element) => {
-          return accumulator += element.plant.price * element.quantity
-        }, 1)
+    .then((updatedUser) => {
+      const totalPrice = updatedUser.cart.reduce((accumulator, element) => {
+        return accumulator + element.plant.price * element.quantity
+      }, 0)
       User.findByIdAndUpdate(req.user._id, {totalPrice}, {new:true})
-      .then((result)=>{
-        console.log("=====>", result)
+      .then((user)=>{
+        res.send({
+          message: 'This plant has been deleted from your cart',
+          // user
+        })
       })
-      }) */
     })
-    .catch((error) => {
-      res.send(error)
-    })
+  })
+  .catch((error) => {
+    console.log(error)
+    res.send(error)
+  })
 })
 
 module.exports = router
+
+
+
