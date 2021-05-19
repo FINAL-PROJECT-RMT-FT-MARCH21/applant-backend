@@ -8,7 +8,7 @@ const passport = require('passport')
 const chalk = require('chalk')
 const flash = require('connect-flash')
 const cors = require('cors')
-const cookieSession = require('cookie-session')
+const path = require('path')
 const LocalStrategy = require('passport-local').Strategy
 const User = require('./models/User.model')
 
@@ -22,13 +22,8 @@ const app = express()
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(cookieParser())
-app.set('trust proxy', 1)
-// app.use(cookieSession({
-//   name: 'session',
-//   keys: ['key1','key2'],
-//   sameSite: 'none',
-//   secure: true
-// }))
+app.use(express.static(path.join(__dirname, 'public')))
+
 // -------- CORS --------
 app.use(
   cors({
@@ -91,12 +86,17 @@ app.use(passport.initialize())
 app.use(passport.session())
 
 // ---------- ROUTES ---------- //
-app.use('/', require('./routes/index.routes'))
-app.use('/', require('./routes/auth.routes'))
-app.use('/', require('./routes/allPlants.routes'))
-app.use('/', require('./routes/posts.routes'))
-app.use('/', require('./routes/profile.routes'))
-app.use('/', require('./routes/stripe.routes'))
+app.use('/app', require('./routes/index.routes'))
+app.use('/app', require('./routes/auth.routes'))
+app.use('/app', require('./routes/allPlants.routes'))
+app.use('/app', require('./routes/posts.routes'))
+app.use('/app', require('./routes/profile.routes'))
+app.use('/app', require('./routes/stripe.routes'))
+
+// app.use((req, res, next)=>{
+//   res.sendFile(__dirname+'/public/index.html')
+// })
+
 // ---------- LISTENER ---------- //
 app.listen(process.env.PORT || 5000, () => {
   console.log(chalk.green.inverse('Port activated'))

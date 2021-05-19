@@ -25,7 +25,7 @@ router.post('/add-to-favorites/:_id', (req, res) => {
             .then((result) => {
               res.send({
                 message: `${plant.commonName} added successfully`,
-                result,
+                data: result,
               })
             })
         } else {
@@ -40,7 +40,7 @@ router.post('/add-to-favorites/:_id', (req, res) => {
             .then((result) => {
               res.send({
                 message: `${result.commonName} created and added successfully`,
-                result,
+                data: result,
               })
             })
         })
@@ -129,7 +129,6 @@ router.post('/add-to-cart', (req, res) => {
         }, 0)
       User.findByIdAndUpdate(req.user._id, {totalPrice}, {new:true})
       .then((result)=>{
-        //console.log("=====>", result)
       })
       })
       .catch((error) => {
@@ -142,11 +141,12 @@ router.post('/add-to-cart', (req, res) => {
 router.post('/remove-from-cart/:_id', (req, res) => {
   User.findByIdAndUpdate(req.user._id, {
     $pull: {cart: {plant: req.params._id}},
-  })
-    .populate('cart.plant')
+  },{new:true})
+    // .populate('cart.plant')
     .then((result) => {
-      res.send(result)
-      User.findById(req.user._id)
+      res.send({message: 'This plant has been deleted from your cart'})
+
+      /*    User.findById(req.user._id)
     .populate('cart')
     .populate('cart.plant')
     .then((result) => {
@@ -157,7 +157,7 @@ router.post('/remove-from-cart/:_id', (req, res) => {
       .then((result)=>{
         console.log("=====>", result)
       })
-      })
+      }) */
     })
     .catch((error) => {
       res.send(error)
