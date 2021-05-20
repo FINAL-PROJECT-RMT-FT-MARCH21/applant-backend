@@ -28,7 +28,7 @@ router.post('/new-plant', (req, res) => {
 })
 
 router.post('/edit-plant/:_id', (req, res) => {
-  Plant.findByIdAndUpdate(req.params._id, req.body)
+  Plant.findByIdAndUpdate(req.params._id, req.body,{new:true})
   .then((result) => {
     res.send({message: `${toUpper(result.commonName)} plant edited`, data: result})
   })
