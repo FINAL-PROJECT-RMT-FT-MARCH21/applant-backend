@@ -9,22 +9,21 @@ router.post("/create-payment-intent", (req, res) => {
   const {_id, totalPrice} = req.body
   User.findById(_id)
   .then((user)=>{
-    console.log('11', user)
-    // const calculateOrderAmount = ()=>{
-    //   return user.totalPrice
-    // }
-
-    // const { items } = req.body;
+  
 
     const paymentIntent = stripe.paymentIntents.create({
       amount: totalPrice*100,
       currency: "eur"
-    });
+    })
+      .then((result) =>{
+        console.log('19', result , req.body)
+        res.send({clientSecret: result.client_secret.toString() })
 
-    res.send({
-      clientSecret: paymentIntent.client_secret
-    });
-
+        User.findByIdAndUpdate(_id,  { cart:[], totalPrice: 0 } ,{ new: true })
+          .then((result)=>{
+            console.log(result)
+          })
+      })
  })
   .catch((err)=>{
     res.send(err)
