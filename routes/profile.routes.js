@@ -24,7 +24,7 @@ router.post('/add-to-favorites/:_id', (req, res) => {
             .populate('favoritePlants')
             .then((result) => {
               res.send({
-                message: `${plant.commonName} added successfully`,
+                message: `${plant.commonName} added successfully to favorites`,
                 data: result,
               })
             })

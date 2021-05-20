@@ -29,7 +29,7 @@ app.use(
   cors({
     methods: ['GET', 'POST'],
     credentials: true,
-    origin: ['https://applant.herokuapp.com'],
+    origin: ['http://localhost:3000'],
   })
 )
 
@@ -93,9 +93,9 @@ app.use('/app', require('./routes/posts.routes'))
 app.use('/app', require('./routes/profile.routes'))
 app.use('/app', require('./routes/stripe.routes'))
 
-app.use((req, res, next)=>{
-  res.sendFile(__dirname+'/public/index.html')
-})
+// app.use((req, res, next)=>{
+//   res.sendFile(__dirname+'/public/index.html')
+// })
 
 // ---------- LISTENER ---------- //
 app.listen(process.env.PORT || 5000, () => {
