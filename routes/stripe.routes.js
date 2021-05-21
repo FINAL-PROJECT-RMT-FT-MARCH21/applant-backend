@@ -16,12 +16,11 @@ router.post("/create-payment-intent", (req, res) => {
       currency: "eur"
     })
       .then((result) =>{
-        console.log('19', result , req.body)
         res.send({clientSecret: result.client_secret.toString() })
 
         User.findByIdAndUpdate(_id,  { cart:[], totalPrice: 0 } ,{ new: true })
           .then((result)=>{
-            console.log(result)
+            send(result)
           })
       })
  })

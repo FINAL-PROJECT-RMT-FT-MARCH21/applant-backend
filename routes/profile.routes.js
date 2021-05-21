@@ -24,12 +24,12 @@ router.post('/add-to-favorites/:_id', (req, res) => {
             .populate('favoritePlants')
             .then((result) => {
               res.send({
-                message: `${plant.commonName} added successfully to favorites`,
+                message: `${toUpper(plant.commonName)} added to favorites`,
                 data: result,
               })
             })
         } else {
-          res.send({ message: 'This plant has been already added' })
+          res.send({ message: 'This plant is already in favorites' })
         }
       } else {
         Plant.create(req.body).then((result) => {
@@ -39,15 +39,15 @@ router.post('/add-to-favorites/:_id', (req, res) => {
             .populate('favoritePlants')
             .then((result) => {
               res.send({
-                message: `${result.commonName} created and added successfully`,
+                message: `${toUpper(result.commonName)} created and added to favorites`,
                 data: result,
               })
             })
         })
       }
     })
-    .catch((error) => {
-      console.log(error)
+    .catch((err) => {
+      console.log(err)
       res.send({ message: 'Error adding plant' })
     })
 })
@@ -60,8 +60,8 @@ router.post('/remove-from-favorites/:_id', (req, res) => {
     .then((result) => {
       res.send({message: `${toUpper(result)} removed from favorites`, data: result})
     })
-    .catch((error) => {
-      res.send(error)
+    .catch((err) => {
+      res.send(err)
     })
 })
 
@@ -76,7 +76,7 @@ router.post('/add-to-cart', (req, res) => {
       const cartPlants = req.user.cart.map((item)=>{
         return item.plant
       })
-      if (!cartPlants.includes(plantId)) {  //cuando añado una planta nueva al carrito (una que no tenía antes)
+      if (!cartPlants.includes(plantId)) {
         User.findByIdAndUpdate(req.user._id, {$push: { cart: { plant: plantId, quantity: newQuantity } }},{ new: true }) 
         .populate('cart')
         .populate('cart.plant')
@@ -91,14 +91,14 @@ router.post('/add-to-cart', (req, res) => {
             User.findByIdAndUpdate(req.user._id, {totalPrice}, {new:true})
             .then((user)=>{
               res.send({
-                message: `${toUpper(plant.commonName)} plant added to your cart`,
+                message: `${toUpper(plant.commonName)} added to your cart`,
                 user,
                 updatedPlant: ''
               })
             })
           })
         })
-      } else {  //Cuando modifico la cantidad de plantas (paso de 2 aloe vera a 5, por ejemplo)
+      } else {
         User.findById(req.user._id)
         .populate('cart')
         .populate('cart.plant')
@@ -129,7 +129,7 @@ router.post('/add-to-cart', (req, res) => {
               User.findByIdAndUpdate(req.user._id, {totalPrice}, {new:true})
               .then((user)=>{
                 res.send({
-                  message: `${toUpper(plant.commonName)} plant added to your cart`,
+                  message: `${toUpper(plant.commonName)} added to your cart`,
                   user,
                   updatedPlant: updatedItem
                 })
@@ -156,15 +156,14 @@ router.post('/remove-from-cart/:_id', (req, res) => {
       User.findByIdAndUpdate(req.user._id, {totalPrice}, {new:true})
       .then((user)=>{
         res.send({
-          message: 'This plant has been deleted from your cart',
-          // user
+          message: 'The plant has been removed from the shopping cart',
         })
       })
     })
   })
-  .catch((error) => {
-    console.log(error)
-    res.send(error)
+  .catch((err) => {
+    console.log(err)
+    res.send(err)
   })
 })
 

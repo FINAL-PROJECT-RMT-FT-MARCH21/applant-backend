@@ -8,8 +8,8 @@ router.get('/posts', (req, res, next) => {
     .then((result) => {
       res.send({data: result})
     })
-    .catch((error) => {
-      console.log(error)
+    .catch((err) => {
+      console.log(err)
     })
 })
 

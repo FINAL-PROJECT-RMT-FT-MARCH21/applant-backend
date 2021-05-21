@@ -16,7 +16,7 @@ router.post('/signup', (req, res, next) => {
   if (username === '' || password === '') {
     res.send({ message: 'You must fill all the fields' })
     return
-  } else if (password.length < 3) {
+  } else if (password.length < 6) {
     res.send({ message: 'The password must be at least 6 digits long' })
     return
   } else {
@@ -50,7 +50,7 @@ router.post('/login', (req, res) => {
   passport.authenticate('local', (err, user, failureDetails) => {
     if (err) {
       console.log(err)
-      res.send({ message: 'Something went bad with Passport Authentication' })
+      res.send({ message: 'Error with Passport Authentication' })
       return
     }
     if (!user) {
@@ -64,13 +64,13 @@ router.post('/login', (req, res) => {
     req.login(user, (err) => {
       if (err) {
         console.log(err)
-        res.send({ message: 'Something went bad logging in' })
+        res.send({ message: 'Error logging in' })
       } else {
         User.findById(user._id)
           .populate('favoritePlants')
           .populate('cart.plant')
           .then((result) => {
-            res.send({ message: 'Log in successfully', data: result })
+            res.send({ message: 'Logged in successfully', data: result })
           })
           .catch(() => {
             res.send({ message: 'Error finding the user' })
@@ -94,14 +94,14 @@ router.get('/user', (req, res) => {
         res.send({ message: 'Error sending user' })
       })
   } else {
-    res.send({message: 'Not authentified'})
+    res.send({message: 'Not authenticated'})
   }
 })
 
 // ------ Logout ----------- //
 router.post('/logout', (req, res) => {
   req.logout()
-  res.send({ message: 'Session closed successfully'})
+  res.send({ message: 'Logged out successfully'})
 })
 
 module.exports = router
