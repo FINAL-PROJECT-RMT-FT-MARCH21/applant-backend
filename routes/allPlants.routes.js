@@ -20,7 +20,7 @@ router.get('/plants', (req, res)=>{
 router.post('/new-plant', (req, res) => {
   Plant.create(req.body)
   .then((result) => {
-    res.send({message: `${toUpper(result.commonName)} plant created`, data: result})
+    res.send({message: `${toUpper(result.commonName)} created`, data: result})
   })
   .catch((err) => {
     console.log(err)
@@ -30,7 +30,7 @@ router.post('/new-plant', (req, res) => {
 router.post('/edit-plant/:_id', (req, res) => {
   Plant.findByIdAndUpdate(req.params._id, req.body,{new:true})
   .then((result) => {
-    res.send({message: `${toUpper(result.commonName)} plant edited`, data: result})
+    res.send({message: `${toUpper(result.commonName)} edited`, data: result})
   })
   .catch((err) => {
     console.log(err)
@@ -40,10 +40,10 @@ router.post('/edit-plant/:_id', (req, res) => {
  router.post('/delete-plant/:_id', (req, res) => {
   Plant.findByIdAndDelete(req.params._id)
   .then((result)=>{
-    res.send({message: `${toUpper(result.commonName)} plant deleted`, data: result})
+    res.send({message: `${toUpper(result.commonName)} deleted`, data: result})
   })
-  .catch((error)=>{
-    res.send(error)
+  .catch((err)=>{
+    res.send(err)
   })
 })
 
