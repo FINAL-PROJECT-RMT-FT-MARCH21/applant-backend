@@ -11,6 +11,8 @@ As we said, at the moment it is not available for mobile phones. We will soon co
 
 → [Applant website](https://applant.herokuapp.com/)
 
+https://user-images.githubusercontent.com/78930337/143888906-1369f73d-aeb4-4547-a753-2dd9870b572c.mp4
+
 ![Applant-Preview](https://i.ibb.co/Dk5XMXX/Captura-de-pantalla-2021-05-21-a-las-12-03-17.png)
 
 ## Tecnologies ⌨️
